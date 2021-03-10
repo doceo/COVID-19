@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 
 contagi = { }
 
-
 dataSom = []
 
 # apertura file riga per riga organizzando il risultato in liste
@@ -28,25 +27,69 @@ with open('dati-regioni/dpc-covid19-ita-regioni.csv', 'r') as file:
 
         if not(row[3] in contagi):
             contagi[row[3]] = []
-    
-        contagi[row[3]].append((data.strftime("%d/%m/%y"),int(row[12])))
+
+        contagi[row[3]].append((data,int(row[12])))
 
 
 print(header)
 file.close()
 
-fig, ax = plt.subplots(3,7)
 date = []
-conta = []
+val = []
+regioni = list(contagi.keys())
+regioni.remove("Campania")
+
+campVal = []
+campDate = []
+# x = np.arange(1,len(campDate),dtype=int)
+
 
 for i in contagi["Campania"]:
-    date.append(i[0])
-    conta.append(i[1])
+    campDate.append(i[0])
+    campVal.append(i[1])
 
-#ax[0].plot(date,conta)
+#print(campVal)
 
-print(len(date))
-print(len(conta))
-print("le regioni sono le seguenti ", contagi.keys(), "\ne sono ", len(contagi))
-
+#print(campDate)
+#print(campVal)
 #print(contagi["Campania"])
+
+
+fig, ax = plt.subplots(1, 4, figsize=(12,7))
+
+# generiamo una matrice di una riga per 4 colonne da inserire in Figure
+left, bottom, width, height = 0.4, 0.4, 0.4, 0.4 
+#plt.xticks(rotation=70)
+
+nome = "contagi-"
+
+for i in range(4):
+    reg = contagi[regioni[i]]
+    
+    for j in reg:
+        date.append(j[0])
+        val.append(j[1])
+    #print(len(val), val)
+    #print(len(date), date)
+
+    ax[i].plot(date, val, color="blue", label=regioni[i])
+    ax[i].plot(campDate, campVal, color="red", label="Campania")
+    ax[i].legend()
+    ax[i].grid(True)
+    #ax[i].set_xlabel('date')
+    ax[i].set_ylabel('Contagi')
+    plt.setp( ax[i].xaxis.get_majorticklabels(), rotation=70 )   
+
+    print(len(val))
+    print(len(date))
+    date.clear()
+    val.clear()
+
+    nome = nome + str(regioni[i]) + "-"
+    
+nome = nome + ".png"
+fig.savefig(nome, dpi=100, facecolor="#f1f1f1")
+
+
+
+plt.show()
