@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+
+# costruiscto un array associativo con le regioni e i suoi abitanti
 
 def inizializzazione():
 
@@ -11,15 +14,41 @@ def inizializzazione():
 
     print(reg['Maschi + Femmine']) # stampo una colonna
 
-    '''
-    voglio costruire una Serie con etichette Regione.
-    verrebbe una struttura di tipo array indicizzato con gli elelenti della colonna che si chiama Regioni.
-    converte in float dati int, ma invece risultano NAN.
+    regList = list(reg['Maschi + Femmine'])
 
-    '''
+    popolazione = pd.Series(regList, index=reg['Regione'])  
 
-    popolazione = pd.Series(reg["Maschi + Femmine"], index=reg['Regione'])  
+    return(popolazione)
 
-    print(popolazione)
 
-    #print(popolazione)
+'''
+estrapola riceve 4 valori in input:
+- datoUno è la prima colonna da estrapolare
+- datoDue è la seconda colonna da estrapolare
+'''
+
+
+def estrapola(datoUno, datoDue):
+
+    estrazione = pd.read_csv('dati-regioni/dpc-covid19-ita-regioni.csv', sep = ',', header = 0, usecols=[datoUno, datoDue])
+
+    colUno = list(estrazione[datoUno])
+    colDue = list(estrazione[datoDue])
+ 
+    return(estrazione)
+
+'''
+INIZIO DEL MAIN
+'''
+
+popol = inizializzazione()
+print(popol)
+
+tIntensiva = estrapola("denominazione_regione","ingressi_terapia_intensiva")
+print(tIntensiva)
+
+fig, axes = plt.subplots (1,2, figsize=(12,8))
+popol.plot(ax=axes[0], kind = 'line', title='line')
+popol.plot(ax=axes[1], kind = 'bar', title = 'bar')
+
+plt.show()
